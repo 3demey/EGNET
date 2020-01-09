@@ -23,8 +23,4 @@ public class Card {
         else if (this._rank == 14)
             this._display = "A" + Character.toString(this._suit);
     }
-
-    public static void main(String[] args) {
-        Card a = new Card(2,'f');
-    }
 }
