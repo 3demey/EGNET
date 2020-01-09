@@ -7,6 +7,10 @@ public class Card {
 
     public int get_rank() { return _rank; }
 
+    public String get_display() {
+        return _display;
+    }
+
     public void print() {
         System.out.println((_display));
     }

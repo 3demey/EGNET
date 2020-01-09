@@ -21,22 +21,19 @@ public class Dealer {
         System.out.println("The game has ended with a draw.");
     }
 
-    public void resultMsg(int bet, int round, Card dcard, Card pcard)  {
-        System.out.print("The result of round  " + round);
+    public static String resultMsg(int bet, int round, Card dcard, Card pcard)  { // Returns appropriate string to round result.
+        String header = "The result of round  " + round;
+        String result = "", dc = "Dealer's card: " + dcard.get_display() +"\n", pc = "Player's card: " + pcard.get_display() +"\n", draw ="";
         if (dcard.get_rank() > pcard.get_rank())
-          System.out.println(":\n Dealer won " + bet + "$");
+            result = ":\n Dealer won " + bet + "$\n";
         else if (dcard.get_rank() < pcard.get_rank())
-         System.out.println(":\n Player won " + bet + "$");
-        else
-        System.out.print(" is a tie!\n");
-        System.out.print("Dealer's card: " );
-        dcard.print();
-        System.out.print("Player's card:  ");
-        pcard.print();
-        if (dcard.get_rank() == pcard.get_rank())
-        System.out.println("The bet: " + bet + "$");
-        System.out.println("Do you wish to surrender or go to war?");
-        //Send surrender/war selection.
+            result = ":\n Player won " + bet + "\n";
+        else {
+            result = " is a tie!\n";
+            draw = "The bet: " + bet + "$\nDo you wish to surrender or go to war?\n";
+            //Send surrender/war selection.
+        }
+        return header + result + dc + pc + draw;
     }
     public void finalResultMsg(int psum, int dsum) {
         printWinnings(psum,dsum,true);
@@ -59,24 +56,29 @@ public class Dealer {
     public static void main(String[] args) throws IOException {
         final ServerSocket server = new ServerSocket(20);
         while (true) {
-            if (clients < 3) {
-                final Socket socket = new server.accept();
+            if (clients < 3) { // THIS IS THE WRONG WAY TO ACCEPT ONLY 2 CLIENTS, FOUND RIGHT WAY ON GOOGLE. A LITTLE CONFUSING.
+                final Socket socket = server.accept();
                 clients++;
                 new Thread(() -> {//Lambda function
                     String clientAddress = "";
-                    Deck drawPile = new Deck(); // A pile for dealer to draw from.
-                    int round;
+                    Deck deck = new Deck(); // A pile for dealer to draw from.
+                    int round = 1, bet;
                     boolean playing = true;
-                    Card pcard = drawPile.draw(), dcard;
+                    Card pcard = deck.draw(), dcard;
                     try {
                         clientAddress = socket.getInetAddress() + ":" + socket.getPort();
                         System.out.println(new Date() + "Connected to client- " + clientAddress);
                         DataInputStream fromPlayerInputStream = new DataInputStream(socket.getInputStream());
                         PrintStream outputStream = new PrintStream(socket.getOutputStream());
-                        System.out.println("Welcome to our WAR GAME!!");
+                        outputStream.println("Welcome to our WAR GAME!!");
                         String line = "";
                         while (playing) {// Actual game
-
+                            outputStream.print(pcard); //Sends player first card.
+                            // Player sends bet
+                           bet = fromPlayerInputStream.readInt();
+                           dcard = deck.draw();
+                           line = resultMsg(bet, round, dcard, pcard);
+                           outputStream.println(line); // Sends result message.
                         }
                     } catch (IOException e) {
                     }
