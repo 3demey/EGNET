@@ -5,6 +5,8 @@ public class Card {
     private char _suit; // The suit does not affect our card in a war.
     private String _display;
 
+    public int get_rank() { return _rank; }
+
     public void print() {
         System.out.println((_display));
     }

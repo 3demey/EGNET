@@ -9,31 +9,31 @@ public class Dealer {
     static int clients;
 
     public void printWinnings(int psum, int dsum, boolean fin) {
-        //if playersum > dealersum
-        System.out.println("Player won " + (psum - dsum) + "$");
-        //		if (fin)
-        System.out.println("Player is the winner! :)");
-        //else if dealersum>playersum
-        System.out.println("Player lost " + (dsum - psum) + "$");
-        // 		if fin
-        System.out.println("Dealer is the winner! :(");
-        //else if fin
+        if (psum > dsum) {
+          System.out.println("Player won " + (psum - dsum) + "$");
+          if (fin)
+            System.out.println("Player is the winner! :)");}
+        else if (dsum > psum) {
+          System.out.println("Player lost " + (dsum - psum) + "$");
+          if (fin)
+             System.out.println("Dealer is the winner! :(");}
+        else if (fin)
         System.out.println("The game has ended with a draw.");
     }
 
     public void resultMsg(int bet, int round, Card dcard, Card pcard)  {
-        System.out.print("The result of round" + round);
-        //if dealer > player
-        System.out.println(":\n Dealer won " + bet + "$");
-        //else if dealer < player
-        System.out.println(":\n Player won " + bet + "$");
-        //else
-        System.out.print("is a tie!\n");
+        System.out.print("The result of round  " + round);
+        if (dcard.get_rank() > pcard.get_rank())
+          System.out.println(":\n Dealer won " + bet + "$");
+        else if (dcard.get_rank() < pcard.get_rank())
+         System.out.println(":\n Player won " + bet + "$");
+        else
+        System.out.print(" is a tie!\n");
         System.out.print("Dealer's card: " );
         dcard.print();
         System.out.print("Player's card:  ");
         pcard.print();
-        //if dealer == player
+        if (dcard.get_rank() == pcard.get_rank())
         System.out.println("The bet: " + bet + "$");
         System.out.println("Do you wish to surrender or go to war?");
         //Send surrender/war selection.
