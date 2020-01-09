@@ -3,7 +3,7 @@ package com;
 import java.util.*;
 
 public class Deck {
-    private ArrayList<Card> cards;
+    private ArrayList<Card> cards = new ArrayList<Card>();
 
     Deck(){
         char[] s = {'S', 'H', 'D', 'C'};
@@ -16,13 +16,5 @@ public class Deck {
 
     public Card draw() {
         return cards.remove(0);
-    }
-
-    public static void main(String[] args) {
-        Deck mydeck = new Deck();
-        mydeck.draw().print();
-        mydeck.draw().print();
-        mydeck.draw().print();
-        mydeck.draw().print();
     }
 }
