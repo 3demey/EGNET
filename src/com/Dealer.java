@@ -62,10 +62,11 @@ public class Dealer {
             if (clients < 3) {
                 final Socket socket = new server.accept();
                 clients++;
-                Thread game = () -> { // Lambda expression
+                new Thread(() -> {//Lambda function
                     String clientAddress = "";
                     Deck drawPile = new Deck(); // A pile for dealer to draw from.
                     int round;
+                    boolean playing = true;
                     Card pcard = drawPile.draw(), dcard;
                     try {
                         clientAddress = socket.getInetAddress() + ":" + socket.getPort();
@@ -74,13 +75,13 @@ public class Dealer {
                         PrintStream outputStream = new PrintStream(socket.getOutputStream());
                         System.out.println("Welcome to our WAR GAME!!");
                         String line = "";
-                        while () {// Actual game
+                        while (playing) {// Actual game
 
                         }
-                    } catch (IOException e) {}
+                    } catch (IOException e) {
+                    }
                     clients--;
-                };
-                game.start();
+                }).run();
             }
         }
     }
