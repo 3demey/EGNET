@@ -8,17 +8,19 @@ public class Dealer {
 
     static int clients;
 
-    public void printWinnings(int psum, int dsum, boolean fin) {
+    public static String Winnings(int psum, int dsum, boolean fin) {
+        String msg ="", endg = "";
         if (psum > dsum) {
-          System.out.println("Player won " + (psum - dsum) + "$");
+          msg = "Player won " + (psum - dsum) + "$";
           if (fin)
-            System.out.println("Player is the winner! :)");}
+            endg = "\nPlayer is the winner! :)";}
         else if (dsum > psum) {
-          System.out.println("Player lost " + (dsum - psum) + "$");
+          msg = "Player lost " + (dsum - psum) + "$";
           if (fin)
-             System.out.println("Dealer is the winner! :(");}
+             endg = "\nDealer is the winner! :(";}
         else if (fin)
-        System.out.println("The game has ended with a draw.");
+        endg = "The game has ended with a draw.";
+        return msg + endg;
     }
 
     public static String resultMsg(int bet, int round, Card dcard, Card pcard)  { // Returns appropriate string to round result.
@@ -35,22 +37,25 @@ public class Dealer {
         }
         return header + result + dc + pc + draw;
     }
-    public void finalResultMsg(int psum, int dsum) {
-        printWinnings(psum,dsum,true);
-        System.out.println("Would you like to play again?");
+    public static String finalResultMsg(int psum, int dsum) {
+        String finalmsg = Winnings(psum,dsum,true);
+        String append = "\nWould you like to play again?";
+        return finalmsg + append;
 
     }
     public void terminateConnection() {
 
     }
-    public void currentStatus(int round, int psum, int dsum) {
-        System.out.println("Current round: " + round);
-        printWinnings(psum,dsum,false);
+    public static String currentStatus(int round, int psum, int dsum) {
+        String status = "Current round: " + round +".\n";
+        String winnings = Winnings(psum,dsum,false);
+        return status + winnings;
     }
-    public void playerQuit(int round, int psum, int dsum) {
-        System.out.println("The game has ended on round" + round + "!");
-        System.out.println("The player quit");
-        printWinnings(psum,dsum,false);
+    public static String playerQuit(int round, int psum, int dsum) {
+        String endGame = "The game has ended on round" + round + "!";
+        String quit = "\nThe player quit\n";
+        String win = Winnings(psum,dsum,false);
+        return endGame + quit + win;
     }
 
     public static void main(String[] args) throws IOException {
