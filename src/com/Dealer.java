@@ -115,13 +115,18 @@ public class Dealer {
                         bet = fromPlayerInputStream.readInt();
                         dcard = deck.draw();
                         line = resultMsg(bet, round, pcard, dcard, earn);
-                        outputStream.println(line);
+                        if (dcard.get_rank() != pcard.get_rank())
+                            line +="\nGREAT! Enter any number to continue.";
+                        outputStream.println(line.replace('\n','#'));
                         if (dcard.get_rank() == pcard.get_rank()) {
                             tieSelect = fromPlayerInputStream.readInt(); //Go to war or Surrender
                             line = tieProced(bet, round, earn, tieSelect, deck);
+                            line += "\nGREAT! Enter any number to continue.";
                             outputStream.println(line.replace('\n','#'));
                         }
-                        //Need to add input.
+                        line += "\nGREAT! Enter any number to continue.";
+                        outputStream.println(line.replace('\n','#'));
+                        fromPlayerInputStream.readInt();
                         int choice;
                         while (playing) {// Actual game - initial interpretation, prone to changes.
                             // Player picks his next move: 1 - next round, 2 - status check, 3 - quit game.
