@@ -1,5 +1,6 @@
 package com;
 
+
 public class Card {
     private int _rank; // The rank of the card will be its value. As J=11,Q=12,K=13,A=14 - as the ace is the trump card.
     private char _suit; // The suit does not affect our card in a war.
@@ -30,4 +31,12 @@ public class Card {
             this._display = "A" + this._suit;
     }
 
+    public static void main(String[] args) {
+        String ex = "MEsiba\nSabich";
+        System.out.println(ex);
+        String ne = ex.replace('\n', '#');
+        System.out.println(ne);
+        String poop = ne.replace('#','\n');
+        System.out.println(poop);
+    }
 }

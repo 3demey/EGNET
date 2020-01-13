@@ -5,10 +5,6 @@ import java.net.*;
 import java.util.*;
 
 public class Player {
-    //NEED TO SWITCH ALL prints TO Strings, so we can send to dealer.
-    //NEED A MAIN MENU FOR OUR PLAYER TO CHOOSE HIS NEXT MOVE. need a main class in general.
-    //Implementation for unwritten methods.
-
 
 //    public int betMsg(int bet,DataInputStream consoleInput, PrintStream toDealerOutputStream)
 //    {		// Queries desired betting amount from player and sends it to the dealer.
