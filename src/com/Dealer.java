@@ -6,9 +6,10 @@ import java.util.*;
 
 public class Dealer {
 
-    public static String Winnings(int earn, boolean fin) { //General func that returns appropriate message for accumulated winnings.
-        // This func can be used in different scenarios. End of a Game (natural or quit), or status check.
-        // variable: fin - adds additional message for when we reached the end of the game (endg).
+    public static String Winnings(int earn, boolean fin) {
+        //General function that returns a message for accumulated winnings.
+        // This function can be used in different scenarios. End of a Game (natural or quit), or status check.
+        // variable: fin - enables additional messages if we reached the end of the game (endg).
         String msg ="", endg = "";
         if (earn > 0) { //Total earnings are positive - player won more than he lost.
           msg = "Player won " + earn + "$";
@@ -26,8 +27,8 @@ public class Dealer {
     }
 
     public static String resultMsg(int bet, int round, Card pcard, Card dcard, int earn)  {
-        // Returns appropriate string for sending player round result.
-        // Function also updates sum earnings of player and dealer.
+        // Returns string with round result data, to be sent to the player.
+        // Function also updates sum earnings.
         String header = "The result of round  " + round; // Header - appropriate for every round result.
         String result = "",  draw =""; //Strings for certain messages - draw only used when round ends with a tie.
         String dc = "Dealer's card: " + dcard.get_display() +"\n", pc = "Player's card: " + pcard.get_display() +"\n";
@@ -41,20 +42,25 @@ public class Dealer {
         }
         else { //This means card ranks are level - a tie!
             result = " is a tie!\n"; // Appropriate result message when round ends with a tie.
-            draw = "The bet: " + bet + "$\nDo you wish to surrender or go to war?\nEnter 0 to surrender or 1 to go to war."; // Only in a tie scenario - different output.
+            draw = "The bet: " + bet + "$\nDo you wish to surrender or go to war?\nEnter 0 to surrender or any other number to go to war."; // Only in a tie scenario - different output.
         }
         return header + result + dc + pc + draw;
     }
-    public static String tieProced(int bet,int round, int earn, int selection, Deck deck)  { //Tie procedure, returns appropriate message to send to player
+    public static String tieProced(int bet,int round, int earn, int selection, Deck deck)  {
+        //Tie procedure, returns message to send to player, when there is a tie.
         String header ="Round " + round + " tie breaker:\n";
         if (selection == 0) {
             earn-=(bet/2);
             return header + "Player surrendered!\nThe bet: "+ bet +"$\nDealer won: " + (bet/2) + "\n Player won: " + (bet/2); }
-        if (selection == 1) {
+        else {
+            header += "Going to war!\n";
+            int cardDiscarded = 0;
             for (int i = 0; i < 3; i++) //Three cards to discard.
-                if (deck.getSize() > 2) //If we reach the end of the deck, we won't throw the cards, we will use them.
+                if (deck.getSize() > 2) { //If we reach the end of the deck, we won't throw the cards, we will use them.
                     deck.draw(); //Discarding & not using cards.
-            String discard = "Three cards discarded";
+                    cardDiscarded++;
+                }
+            String discard = cardDiscarded + " cards were discarded";
             String tieMsg = "Original bet: " + bet + "$\nNew bet: " + (2 * bet) + "$\n", result = "";
             Card pcard = deck.draw(), dcard = deck.draw();
             String dc = "Dealer's card: " + dcard.get_display() + "\n", pc = "Player's card: " + pcard.get_display() + "\n";
@@ -70,9 +76,9 @@ public class Dealer {
             }
             return header + tieMsg + dc + pc + result;
         }
-        return "Illegible entry, please try again.";
     }
-    public static String finalResultMsg(int earn) { // Returns appropriate string for sending player when the game ends.
+    public static String finalResultMsg(int earn) {
+        // Returns appropriate string for sending player when the game ends.
         String finalmsg = Winnings(earn,true); // A string that represents total winnings - see winnings. Game over - fin == true.
         String append = "\nWould you like to play again?"; // Additional message when game ends.
         return finalmsg + append;
@@ -84,9 +90,10 @@ public class Dealer {
     }
     public static String playerQuit(int round, int earn) {
         String endGame = "The game has ended on round" + round + "!";
-        String quit = "\nThe player quit\n";
-        String win = Winnings(earn,true); // Game ends - therefore fin = true.
-        return endGame + quit + win;
+        String quit = "\nThe player quit.\n";
+        String win = Winnings(earn,false);
+        String thanks = "\nThanks for playing.";
+        return endGame + quit + win + thanks;
     }
 
 
