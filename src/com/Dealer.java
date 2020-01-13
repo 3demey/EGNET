@@ -89,7 +89,6 @@ public class Dealer {
         return endGame + quit + win;
     }
 
-    //public static void firstRound(int round, int bet, int earn, Card)
 
     public static void main(String[] args) throws IOException {
         final ServerSocket server = new ServerSocket(2000);
@@ -196,13 +195,14 @@ public class Dealer {
                         }
                         outputStream.println("Thanks for playing, GOODBYE");
                         outputStream.println("PIPIKAKI");
-                        //TODO - terminate connection.
-                    } catch (IOException e) {
-                    }
+                        if(!socket.isClosed())
+                            socket.close();
+                    } catch (IOException e) { }
                 }).run();
             }//if too many players
-            else {//Message to player that he can't connect.
-                //TODO terminate connection
+            else {
+                PrintStream outputStream = new PrintStream(socket.getOutputStream());
+                outputStream.println("PIPIKAKI");
                 if(!socket.isClosed())
                     socket.close();
             }

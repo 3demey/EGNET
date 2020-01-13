@@ -20,18 +20,6 @@ public class Player {
 //        toDealerOutputStream.print(bet);
 //    }
 
-//    public int answerToInt(String answer)
-//    {
-//        //gets the choice if he wants to continue or not, and returns int, in main we will return to server.
-//        System.out.println("Enter yes for surrender and no to continue");
-//        int srndr ;
-//        if(answer =="yes")
-//            srndr = 1;
-//        else {
-//            srndr = 0;
-//        }
-//        return srndr;
-//    }
 
     public static void main(String[] args) {
         Socket socket = null;
@@ -41,7 +29,7 @@ public class Player {
         String line = "";
         int answer;
         try{
-            socket = new Socket("localhost",7000);
+            socket = new Socket("localhost",2000);
             System.out.println(new Date() + "Connected to server- " + socket.getLocalAddress() + ":" + socket.getLocalPort());
             fromDealerInputStream = new DataInputStream(socket.getInputStream());
             toDealerOutputStream = new PrintStream(socket.getOutputStream());
