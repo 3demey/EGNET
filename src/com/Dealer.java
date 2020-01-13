@@ -6,8 +6,6 @@ import java.util.*;
 
 public class Dealer {
 
-    static int clients;
-
     public static String Winnings(int earn, boolean fin) { //General func that returns appropriate message for accumulated winnings.
         // This func can be used in different scenarios. End of a Game (natural or quit), or status check.
         // variable: fin - adds additional message for when we reached the end of the game (endg).
@@ -27,7 +25,7 @@ public class Dealer {
         return msg + endg;
     }
 
-    public static String resultMsg(int bet, int round, Card pcard, Card dcard, int earn, boolean tie)  {
+    public static String resultMsg(int bet, int round, Card pcard, Card dcard, int earn)  {
         // Returns appropriate string for sending player round result.
         // Function also updates sum earnings of player and dealer.
         String header = "The result of round  " + round; // Header - appropriate for every round result.
@@ -42,7 +40,6 @@ public class Dealer {
             earn -= bet; //Total winnings decreased by loss of bet.
         }
         else { //This means card ranks are level - a tie!
-            tie = true; //Updates variable for later use - to start another round.
             result = " is a tie!\n"; // Appropriate result message when round ends with a tie.
             draw = "The bet: " + bet + "$\nDo you wish to surrender or go to war?"; // Only in a tie scenario - different output.
         }
@@ -89,36 +86,44 @@ public class Dealer {
         return endGame + quit + win;
     }
 
-  //  public static void firstRound(int round, int bet, int earn, Card)
+    public static void firstRound(int round, int bet, int earn, Card)
 
     public static void main(String[] args) throws IOException {
         final ServerSocket server = new ServerSocket(20);
+        int players = 0;
         while (true) {
             Socket socket = server.accept();
+            players++;
                 new Thread(() -> {//Lambda function
                     String clientAddress = "";
-                    Deck deck = new Deck(); // A pile for dealer to draw from.
-                    int round = 1, bet, earn = 0, total = 0;
-                    boolean playing = true, tie = false, tieSelect;
-                    Card pcard = deck.draw(), dcard;
                     try {
                         clientAddress = socket.getInetAddress() + ":" + socket.getPort();
                         System.out.println(new Date() + "Connected to client- " + clientAddress);
                         DataInputStream fromPlayerInputStream = new DataInputStream(socket.getInputStream());
                         PrintStream outputStream = new PrintStream(socket.getOutputStream());
+
+                        boolean playing = true; // Variable the determines whether game is still going, or should be stopped.
+                        if (players > 1) {
+                            outputStream.println("Too many players currently connected.\nPlease try to join again later!");
+                            playing = false;
+                        }
+                        else {}
+                        Deck deck = new Deck(); // A pile for dealer to draw from.
+                        int round = 1, bet, earn = 0, total = 0; // round indicator, acceptor for player's bet, earn - game earnings, total - total earnings from all games.
+                        boolean tieSelect; // tieSelect - proceed/surrender.
+                        Card pcard = deck.draw(), dcard; // Card for player
                         outputStream.println("Welcome to our WAR GAME!!");
                         String line = "";
                         outputStream.print("Your card: " + pcard); //Sends player first card.
                         // Player sends bet
                         bet = fromPlayerInputStream.readInt();
                         dcard = deck.draw();
-                        line = resultMsg(bet, round, pcard, dcard, earn, tie);
+                        line = resultMsg(bet, round, pcard, dcard, earn);
                         outputStream.println(line);
-                        if (tie){
+                        if (dcard.get_rank() == pcard.get_rank()){
                             tieSelect = fromPlayerInputStream.readBoolean(); //Go to war or Surrender
                             line = tieProced(bet, round, earn, tieSelect, deck);
                             outputStream.println(line);
-                            tie = false;
                            }
                         int choice;
                         while (playing) {// Actual game - initial interpretation, prone to changes.
@@ -132,9 +137,9 @@ public class Dealer {
                                     outputStream.println("Your card:" + pcard.get_display() + ", please enter your bet.");
                                     bet = fromPlayerInputStream.readInt();
                                     dcard = deck.draw();
-                                    line = resultMsg(bet, round, pcard, dcard, earn, tie);
+                                    line = resultMsg(bet, round, pcard, dcard, earn);
                                     outputStream.println(line);
-                                    if (tie){
+                                    if (dcard.get_rank() == pcard.get_rank()){
                                         if (deck.getSize() < 2) {
                                             tieSelect = false; //Not enough cards for tie round - automatic surrender.
                                             outputStream.println("Deck empty - automatic surrender.");
@@ -142,7 +147,6 @@ public class Dealer {
                                         tieSelect = fromPlayerInputStream.readBoolean(); //Go to war or Surrender
                                         line = tieProced(bet, round, earn, tieSelect, deck);
                                         outputStream.println(line);
-                                        tie = false;
                                     } // if - tie
                                 } // case 1
                                 break;
@@ -182,13 +186,12 @@ public class Dealer {
                                     // Player sends bet
                                     bet = fromPlayerInputStream.readInt();
                                     dcard = deck.draw();
-                                    line = resultMsg(bet, round, pcard, dcard, earn, tie);
+                                    line = resultMsg(bet, round, pcard, dcard, earn);
                                     outputStream.println(line);
-                                    if (tie){
+                                    if (dcard.get_rank() == pcard.get_rank()){
                                         tieSelect = fromPlayerInputStream.readBoolean(); // Go to war or Surrender
                                         line = tieProced(bet, round, earn, tieSelect, deck);
                                         outputStream.println(line);
-                                        tie = false;
                                     }
                                 }
                             } //if - empty deck
@@ -197,7 +200,7 @@ public class Dealer {
                         outputStream.println("PIPIKAKI");
                         //TODO - terminate connection.
                     } catch (IOException e) {}
-                    clients--;
+                    players--;
                 }).run();
             }
         }
