@@ -26,6 +26,7 @@ public class Player {
         DataInputStream fromDealerInputStream;
         DataInputStream consoleInput;
         PrintStream toDealerOutputStream;
+        String initLine = "";       //line with # instead of \n
         String line = "";
         int answer;
         try{
@@ -35,12 +36,14 @@ public class Player {
             toDealerOutputStream = new PrintStream(socket.getOutputStream());
             consoleInput = new DataInputStream(System.in);
             //gets the messege from server adn prints it for him
-            line = fromDealerInputStream.readLine();
+            initLine = fromDealerInputStream.readLine();
+            line = initLine.replace('#', '\n');
             while(!(line.equals("PIPIKAKI"))){
                 System.out.println(line);
                 answer = consoleInput.readInt();
                 toDealerOutputStream.print(answer);
-                line = fromDealerInputStream.readLine();
+                initLine = fromDealerInputStream.readLine();
+                line = initLine.replace('#','\n');
             }
         } catch(Exception e) {System.err.println(e);}
         finally {
