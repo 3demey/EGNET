@@ -50,9 +50,9 @@ public class Dealer {
     }
     public static String tieProced(int bet,int round, int earn, boolean selection, Deck deck)  { //Tie procedure, returns appropriate message to send to player
         String header ="Round " + round + " tie breaker:\n";
-        if (!selection){
+        if (!selection) {
             earn-=(bet/2);
-            return header + "Player surrendered!\nThe bet: "+ bet +"$\nDealer won: " + (bet/2) + "\n Player won: " + (bet/2);}
+            return header + "Player surrendered!\nThe bet: "+ bet +"$\nDealer won: " + (bet/2) + "\n Player won: " + (bet/2); }
         for(int i = 0 ; i < 3 ; i++) //Three cards to discard.
             if(deck.getSize() > 2) //If we reach the end of the deck, we won't throw the cards, we will use them.
                 deck.draw(); //Discarding & not using cards.
@@ -95,8 +95,6 @@ public class Dealer {
         final ServerSocket server = new ServerSocket(20);
         while (true) {
             Socket socket = server.accept();
-            if (clients == 2) {
-                clients++;
                 new Thread(() -> {//Lambda function
                     String clientAddress = "";
                     Deck deck = new Deck(); // A pile for dealer to draw from.
