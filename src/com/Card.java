@@ -19,14 +19,15 @@ public class Card {
         this._rank = r;
         this._suit = s;
         if (this._rank < 11)
-            this._display = Integer.toString(this._rank) + Character.toString(this._suit);
+            this._display = Integer.toString(this._rank) + this._suit;
         else if (this._rank == 11)
-            this._display = "J" + Character.toString(this._suit);
+            this._display = "J" + this._suit;
         else if (this._rank == 12)
-            this._display = "Q" + Character.toString(this._suit);
+            this._display = "Q" + this._suit;
         else if (this._rank == 13)
-            this._display = "K" + Character.toString(this._suit);
+            this._display = "K" + this._suit;
         else if (this._rank == 14)
-            this._display = "A" + Character.toString(this._suit);
+            this._display = "A" + this._suit;
     }
+
 }
