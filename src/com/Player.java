@@ -26,7 +26,7 @@ public class Player {
             while(!(line.equals("PIPIKAKI"))){
                 System.out.println(line);
                 answer = consoleInput.readInt();
-                toDealerOutputStream.print(answer);
+                toDealerOutputStream.println(answer);
                 initLine = fromDealerInputStream.readLine();
                 line = initLine.replace('#','\n');
             }
