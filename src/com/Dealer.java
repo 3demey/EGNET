@@ -10,7 +10,7 @@ import java.util.*;
 //TODO: Should Check if the game works in paralel for 2 users (and what happens in more)
 //TODO: should change the PIPIKAKI messege
 //TODO:should start documenting that damned thing
-
+//TODO: ask eden about the enter any number messege that he wanted to add
 public class Dealer {
     // Tool functions for later use
     public static String Winnings(int[] earn, boolean fin) {
@@ -19,7 +19,7 @@ public class Dealer {
         // variable: fin - enables additional messages if we reached the end of the game (endg).
         String msg ="", endg = "";
         if (earn[0] > 0) { //Total earnings are positive - player won more than he lost.
-          msg = "Player won " + earn + "$";
+          msg = "Player won " + earn[0] + "$";
           if (fin) //If we reached the end of a game - additional message to be added.
             endg = "\nPlayer is the winner! :)";}
         else if (earn[0] < 0) { //Total earnings are negative - player lost more than he won.
@@ -117,6 +117,7 @@ public class Dealer {
                 new Thread(() -> {//Lambda function
                     String clientAddress = "";
                     try {
+                        //initializations before starting
                         clientAddress = socket.getInetAddress() + ":" + socket.getPort();
                         System.out.println(new Date() + ". Connected to client - " + clientAddress + ". Client will start game shortly...");
                         DataInputStream fromPlayerInputStream = new DataInputStream(socket.getInputStream());
@@ -127,22 +128,29 @@ public class Dealer {
                         int[] earn = new int[1];
                         earn[0] = 0;
                         int tieSelect; // tieSelect - proceed/surrender.
+
+                        //welcome message and first round, including the case of a tie in the beginning.
                         Card pcard = deck.draw(), dcard; // Card for player
                         line = "Welcome to our WAR GAME!!\nYour card: " + pcard.get_display() + "\nPlease enter the amount you are willing to bet on: ";
                         toPlayerOutputStream.println(line.replace('\n','#'));
                         bet = fromPlayerInputStream.readInt();
                         dcard = deck.draw();
                         line = resultMsg(bet, round, pcard, dcard, earn);
+                        //not tie in first round
                         if (dcard.get_rank() != pcard.get_rank())
                             line += "\n\nEnter any number to continue.\n\n";
-                        toPlayerOutputStream.println(line.replace('\n','#'));
+                        toPlayerOutputStream.println(line.replace('\n','#')); //TODO sholud be inside ? doesnt matter
+                        //tie in first round
                         if (dcard.get_rank() == pcard.get_rank()) {
                             tieSelect = fromPlayerInputStream.readInt(); //Go to war or Surrender
                             line = tieProced(bet, round, earn, tieSelect, deck);
                             line += "\n\nEnter any number to continue.\n\n";
                             toPlayerOutputStream.println(line.replace('\n','#'));
                         } // if - tie
+                        //streaming the message to client
                         fromPlayerInputStream.readInt();
+
+                        //starting the game
                         boolean playing = true; // Variable the determines whether game is still going, or should be stopped.
                         while (playing) {// Actual game - initial interpretation, prone to changes.
                             int choice, quit;
@@ -215,7 +223,7 @@ public class Dealer {
                                     round = 1; //Restarting round counter.
                                     earn[0] = 0; //Restarting game earnings.
                                     line = "new WAR GAME starting!!";
-                                    line += "\nYour card: " + pcard + "\nPlease enter your bet."; // Sends player first card.
+                                    line += "\nYour card: " + pcard.get_display() + "\nPlease enter your bet."; // Sends player first card.
                                     toPlayerOutputStream.println(line.replace('\n','#'));
                                     bet = fromPlayerInputStream.readInt();
                                     dcard = deck.draw();
