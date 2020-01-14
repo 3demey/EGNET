@@ -117,7 +117,7 @@ public class Dealer {
                         int round = 1, bet, earn = 0, total = 0; // round indicator, acceptor for player's bet, earn - game earnings, total - total earnings from all games.
                         int tieSelect; // tieSelect - proceed/surrender.
                         Card pcard = deck.draw(), dcard; // Card for player
-                        line = "Welcome to our WAR GAME!!\nYour card: " + pcard + "\nPlease enter the amount you are willing to bet on: ";
+                        line = "Welcome to our WAR GAME!!\nYour card: " + pcard.get_display() + "\nPlease enter the amount you are willing to bet on: ";
                         toPlayerOutputStream.println(line.replace('\n','#'));
                         bet = fromPlayerInputStream.readInt();
                         dcard = deck.draw();
