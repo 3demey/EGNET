@@ -19,9 +19,10 @@ public class Dealer {
           msg = "Player lost " + (-earn) + "$";
           if (fin)
              endg = "\nDealer is the winner! :(";}
-        else if (fin) {
+        else {
             msg = "Player won 0$";
-            endg = "The game has ended with a draw.";
+            if (fin)
+                endg = "The game has ended with a draw.";
         }
         return msg + endg;
     }
@@ -89,11 +90,12 @@ public class Dealer {
         return status + winnings;
     }
     public static String playerQuit(int round, int earn) {
-        String endGame = "The game has ended on round" + round + "!";
+        String endGame = "The game has ended on round " + round + "!";
         String quit = "\nThe player quit.\n";
         String win = Winnings(earn,false);
         String thanks = "\nThanks for playing.";
-        return endGame + quit + win + thanks;
+        String contin = "\nEnter any number to continue.";
+        return endGame + quit + win + thanks + contin;
     }
 
 
@@ -109,7 +111,7 @@ public class Dealer {
                     String clientAddress = "";
                     try {
                         clientAddress = socket.getInetAddress() + ":" + socket.getPort();
-                        System.out.println(new Date() + "Connected to client - " + clientAddress + ". Client will start game shortly...");
+                        System.out.println(new Date() + ". Connected to client - " + clientAddress + ". Client will start game shortly...");
                         DataInputStream fromPlayerInputStream = new DataInputStream(socket.getInputStream());
                         PrintStream toPlayerOutputStream = new PrintStream(socket.getOutputStream());
                         String line = "";
@@ -150,6 +152,8 @@ public class Dealer {
                                     bet = fromPlayerInputStream.readInt();
                                     dcard = deck.draw();
                                     line = resultMsg(bet, round, pcard, dcard, earn);
+                                    if (dcard.get_rank() != pcard.get_rank())
+                                        line += "\n\nEnter any number to continue.\n\n";
                                     toPlayerOutputStream.println(line.replace('\n','#'));
                                     if (dcard.get_rank() == pcard.get_rank()) { // TIE - receiving decision from player.
                                         tieSelect = fromPlayerInputStream.readInt(); //Go to war or Surrender
@@ -162,8 +166,8 @@ public class Dealer {
                                         line = tieProced(bet, round, earn, tieSelect, deck);
                                         line += "\n\nEnter any number to continue.\n\n";
                                         toPlayerOutputStream.println(line.replace('\n','#'));
-                                        fromPlayerInputStream.readInt();
                                     } // if - tie
+                                    fromPlayerInputStream.readInt();
                                 } // case 1
                                 break;
                                 case 2: { //Player checks his current game status

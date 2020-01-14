@@ -9,23 +9,24 @@ public class Player {
     public static void main(String[] args) {
         Socket socket = null;
         DataInputStream fromDealerInputStream;
-        DataInputStream consoleInput;
+        //DataInputStream consoleInput;
+        Scanner consoleInput = new Scanner(System.in);
         DataOutputStream toDealerOutputStream;
         String initLine = "";       //line with # instead of \n
         String line = "";
         int answer;
         try{
             socket = new Socket("localhost",2000);
-            System.out.println(new Date() + "Connected to server - " + socket.getLocalAddress() + ":" + socket.getLocalPort());
+            System.out.println(new Date() + ". Connected to server - " + socket.getLocalAddress() + ":" + socket.getLocalPort());
             fromDealerInputStream = new DataInputStream(socket.getInputStream());
             toDealerOutputStream = new DataOutputStream(socket.getOutputStream());
-            consoleInput = new DataInputStream(System.in);
+            //consoleInput = new DataInputStream(System.in);
             // Gets the message from server and prints it for him
             initLine = fromDealerInputStream.readLine();
             line = initLine.replace('#', '\n');
             while(!(line.equals("PIPIKAKI"))){
                 System.out.println(line);
-                answer = consoleInput.readInt();
+                answer = consoleInput.nextInt();
                 toDealerOutputStream.writeInt(answer);
                 initLine = fromDealerInputStream.readLine();
                 line = initLine.replace('#','\n');
