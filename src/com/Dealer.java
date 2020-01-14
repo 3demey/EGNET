@@ -54,7 +54,7 @@ public class Dealer {
         String header ="Round " + round + " tie breaker:\n";
         if (selection == 0) {
             earn[0]-=(bet/2);
-            return header + "Player surrendered!\nThe bet: "+ bet +"$\nDealer won: " + (bet/2) + "\n Player won: " + (bet/2); }
+            return header + "Player surrendered!\nThe bet: "+ bet +"$\nDealer won: " + (bet/2) + "$\nPlayer won: " + (bet/2) + "$"; }
         else {
             header += "Going to war!\n";
             int cardDiscarded = 0;
@@ -77,7 +77,7 @@ public class Dealer {
                 result = "Player won: " + (bet * 2) + "$\n"; // Appropriate result message when round ends with a draw.
                 earn[0] += (bet * 2);
             }
-            return header + tieMsg + dc + pc + result;
+            return header + discard + tieMsg + dc + pc + result;
         }
     }
     public static String finalResultMsg(int[] earn) {
@@ -106,6 +106,7 @@ public class Dealer {
         final ServerSocket server = new ServerSocket(2000);
         int players = 0;
         while (true) {
+            final int fplayers = players;
             Socket socket = server.accept();
             players++;
             if (players <= 2) {
@@ -133,13 +134,13 @@ public class Dealer {
                         line = resultMsg(bet, round, pcard, dcard, earn);
                         //not tie in first round
                         if (dcard.get_rank() != pcard.get_rank())
-                            line += "\n\nEnter any number to continue.\n\n";
+                            line += "\n\nEnter any number to continue.";
                         toPlayerOutputStream.println(line.replace('\n','#'));
                         //tie in first round, it would print if the player would like to surrender or not.
                         if (dcard.get_rank() == pcard.get_rank()) {
                             tieSelect = fromPlayerInputStream.readInt(); //Go to war or Surrender
                             line = tieProced(bet, round, earn, tieSelect, deck);
-                            line += "\n\nEnter any number to continue.\n\n";
+                            line += "\n\nEnter any number to continue.";
                             toPlayerOutputStream.println(line.replace('\n','#'));
                         } // if - tie
                         //streaming the message to client
@@ -150,7 +151,7 @@ public class Dealer {
                         while (playing) {// Actual game - initial interpretation, prone to changes.
                             int choice, quit;
                             // Player picks his next move: 1 - next round, 2 - status check, 3 - quit game.
-                            line = "=================================================\n";
+                            line = "\n\n=================================================\n";
                             line += "Select your next move:\n1) Continue to next round.\n2) Check game status.\n3) Quit game.\n";
                             line += "=================================================";
                             toPlayerOutputStream.println(line.replace('\n','#'));
@@ -169,28 +170,28 @@ public class Dealer {
                                     line = resultMsg(bet, round, pcard, dcard, earn);
                                     //if there isnt tie
                                     if (dcard.get_rank() != pcard.get_rank())
-                                        line += "\n\nEnter any number to continue.\n\n";
+                                        line += "\n\nEnter any number to continue.";
                                     toPlayerOutputStream.println(line.replace('\n','#'));
                                     //if it's tie
                                     if (dcard.get_rank() == pcard.get_rank()) { // TIE - receiving decision from player.
                                         tieSelect = fromPlayerInputStream.readInt(); //Go to war or Surrender
                                         //checking if there are enough cards for tie, if not - client loses as if he would surrender
                                         if (deck.getSize() < 2) {
-                                            line = "Sorry, our deck of cards is empty - surrendering automatically.\nEnter any number to continue.";
+                                            line = "Sorry, our deck of cards is empty - round over, bet cancelled.\n\nEnter any number to continue.";
                                             toPlayerOutputStream.println(line.replace('\n','#'));
-                                            fromPlayerInputStream.readInt();
-                                            tieSelect = 0; //Not enough cards for tie round - automatic surrender.
                                         } // if - deck empty
-                                        line = tieProced(bet, round, earn, tieSelect, deck);
-                                        line += "\n\nEnter any number to continue.\n\n";
-                                        toPlayerOutputStream.println(line.replace('\n','#'));
+                                        else {
+                                            line = tieProced(bet, round, earn, tieSelect, deck);
+                                            line += "\n\nEnter any number to continue.";
+                                            toPlayerOutputStream.println(line.replace('\n', '#'));
+                                        }
                                     } // if - tie
                                     fromPlayerInputStream.readInt();
                                 } // case 1
                                 break;
                                 case 2: { //Player checks his current game status
                                     line = currentStatus(round, earn);
-                                    line += "\n\nEnter any number to continue.\n\n";
+                                    line += "\n\nEnter any number to continue.";
                                     toPlayerOutputStream.println(line.replace('\n','#'));
                                     fromPlayerInputStream.readInt();
                                 } //case 2
@@ -202,8 +203,9 @@ public class Dealer {
                                 } // case 3
                                 break;
                                 default: {
-                                    line = "Illegible input, please try again.";
+                                    line = "Illegible input, please try again.\n\nEnter any number to continue.";
                                     toPlayerOutputStream.println(line.replace('\n','#'));
+                                    fromPlayerInputStream.readInt();
                                 }
                             } // switch
                             if (deck.getSize() < 2) {//Deck empty.
@@ -213,7 +215,7 @@ public class Dealer {
                                     line += "\nIn total, player won " + total + "$";
                                 else
                                     line += "\nIn total, player lost " + (-total) + "$";
-                                line += "\nTo finish the game - enter 0, to continue playing - enter any other key.";
+                                line += "\nTo finish the game - enter 0, to continue playing - enter any other number.";
                                 toPlayerOutputStream.println(line.replace('\n','#'));
                                 quit = fromPlayerInputStream.readInt();
                                 if (quit == 0)
@@ -230,12 +232,12 @@ public class Dealer {
                                     dcard = deck.draw();
                                     line = resultMsg(bet, round, pcard, dcard, earn);
                                     if (dcard.get_rank() != pcard.get_rank())
-                                        line += "\n\nEnter any number to continue.\n\n";
+                                        line += "\n\nEnter any number to continue.";
                                     toPlayerOutputStream.println(line.replace('\n','#'));
                                     if (dcard.get_rank() == pcard.get_rank()) {
                                         tieSelect = fromPlayerInputStream.readInt(); // Go to war or Surrender
                                         line = tieProced(bet, round, earn, tieSelect, deck);
-                                        line += "\n\nEnter any number to continue.\n\n";
+                                        line += "\n\nEnter any number to continue.";
                                         toPlayerOutputStream.println(line.replace('\n','#'));
                                     } // first round tie.
                                     fromPlayerInputStream.readInt();
@@ -254,10 +256,10 @@ public class Dealer {
                 System.out.println(new Date() + "Connected to client - " + clientAddress + ". Client is kicked out of game.");
                 PrintStream toPlayerOutputStream = new PrintStream(socket.getOutputStream());
                 toPlayerOutputStream.println("Game Over");
-                if(!socket.isClosed())
+                if (!socket.isClosed())
                     socket.close();
+                players--;
             }
-            players--;
             }
         }
     }

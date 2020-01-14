@@ -20,7 +20,6 @@ public class Player {
             System.out.println(new Date() + ". Connected to server - " + socket.getLocalAddress() + ":" + socket.getLocalPort());
             fromDealerInputStream = new DataInputStream(socket.getInputStream());
             toDealerOutputStream = new DataOutputStream(socket.getOutputStream());
-            //consoleInput = new DataInputStream(System.in);
             // Gets the message from server and prints it for him
             initLine = fromDealerInputStream.readLine();
             line = initLine.replace('#', '\n');
