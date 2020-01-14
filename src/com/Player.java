@@ -10,7 +10,7 @@ public class Player {
         Socket socket = null;
         DataInputStream fromDealerInputStream;
         DataInputStream consoleInput;
-        PrintStream toDealerOutputStream;
+        DataOutputStream toDealerOutputStream;
         String initLine = "";       //line with # instead of \n
         String line = "";
         int answer;
@@ -18,7 +18,7 @@ public class Player {
             socket = new Socket("localhost",2000);
             System.out.println(new Date() + "Connected to server - " + socket.getLocalAddress() + ":" + socket.getLocalPort());
             fromDealerInputStream = new DataInputStream(socket.getInputStream());
-            toDealerOutputStream = new PrintStream(socket.getOutputStream());
+            toDealerOutputStream = new DataOutputStream(socket.getOutputStream());
             consoleInput = new DataInputStream(System.in);
             // Gets the message from server and prints it for him
             initLine = fromDealerInputStream.readLine();
@@ -26,7 +26,7 @@ public class Player {
             while(!(line.equals("PIPIKAKI"))){
                 System.out.println(line);
                 answer = consoleInput.readInt();
-                toDealerOutputStream.println(answer);
+                toDealerOutputStream.writeInt(answer);
                 initLine = fromDealerInputStream.readLine();
                 line = initLine.replace('#','\n');
             }
