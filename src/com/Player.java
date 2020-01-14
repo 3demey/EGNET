@@ -24,7 +24,7 @@ public class Player {
             // Gets the message from server and prints it for him
             initLine = fromDealerInputStream.readLine();
             line = initLine.replace('#', '\n');
-            while(!(line.equals("PIPIKAKI"))){
+            while(!(line.equals("Game Over"))){
                 System.out.println(line);
                 answer = consoleInput.nextInt();
                 toDealerOutputStream.writeInt(answer);

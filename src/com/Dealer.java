@@ -3,14 +3,9 @@ package com;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-//TODO: should change earn accordingly to an array with size 1, thats cause we're changing its value inside the function
-// (because that its int, passed by value)  - DONE!
-//TODO: should check if there is another variable that is being updated inside functions and to the same.
-//TODO: Should check all use-cases for our game.
+
 //TODO: Should Check if the game works in paralel for 2 users (and what happens in more)
-//TODO: should change the PIPIKAKI messege
-//TODO:should start documenting that damned thing
-//TODO: ask eden about the enter any number messege that he wanted to add
+
 public class Dealer {
     // Tool functions for later use
     public static String Winnings(int[] earn, boolean fin) {
@@ -139,8 +134,8 @@ public class Dealer {
                         //not tie in first round
                         if (dcard.get_rank() != pcard.get_rank())
                             line += "\n\nEnter any number to continue.\n\n";
-                        toPlayerOutputStream.println(line.replace('\n','#')); //TODO sholud be inside ? doesnt matter
-                        //tie in first round
+                        toPlayerOutputStream.println(line.replace('\n','#'));
+                        //tie in first round, it would print if the player would like to surrender or not.
                         if (dcard.get_rank() == pcard.get_rank()) {
                             tieSelect = fromPlayerInputStream.readInt(); //Go to war or Surrender
                             line = tieProced(bet, round, earn, tieSelect, deck);
@@ -161,7 +156,10 @@ public class Dealer {
                             toPlayerOutputStream.println(line.replace('\n','#'));
                             choice = fromPlayerInputStream.readInt();
                             switch (choice) {
+
+                                //case 1: he continues to next round
                                 case 1: {
+                                    //drawing card, sending a message to client for bet and then drawing for dealer and messaging the client
                                     round++;
                                     pcard = deck.draw();
                                     line = "Your card:" + pcard.get_display() + "\nPlease enter your bet.";
@@ -169,11 +167,14 @@ public class Dealer {
                                     bet = fromPlayerInputStream.readInt();
                                     dcard = deck.draw();
                                     line = resultMsg(bet, round, pcard, dcard, earn);
+                                    //if there isnt tie
                                     if (dcard.get_rank() != pcard.get_rank())
                                         line += "\n\nEnter any number to continue.\n\n";
                                     toPlayerOutputStream.println(line.replace('\n','#'));
+                                    //if it's tie
                                     if (dcard.get_rank() == pcard.get_rank()) { // TIE - receiving decision from player.
                                         tieSelect = fromPlayerInputStream.readInt(); //Go to war or Surrender
+                                        //checking if there are enough cards for tie, if not - client loses as if he would surrender
                                         if (deck.getSize() < 2) {
                                             line = "Sorry, our deck of cards is empty - surrendering automatically.\nEnter any number to continue.";
                                             toPlayerOutputStream.println(line.replace('\n','#'));
@@ -242,7 +243,7 @@ public class Dealer {
                             } //if - empty deck
                         } // while - playing
                         System.out.println("Disconnecting from client - " + clientAddress);
-                        toPlayerOutputStream.println("PIPIKAKI");
+                        toPlayerOutputStream.println("Game Over");
                         if(!socket.isClosed())
                             socket.close();
                     } catch (IOException e) { }
@@ -252,7 +253,7 @@ public class Dealer {
                 String clientAddress = socket.getInetAddress() + ":" + socket.getPort();
                 System.out.println(new Date() + "Connected to client - " + clientAddress + ". Client is kicked out of game.");
                 PrintStream toPlayerOutputStream = new PrintStream(socket.getOutputStream());
-                toPlayerOutputStream.println("PIPIKAKI");
+                toPlayerOutputStream.println("Game Over");
                 if(!socket.isClosed())
                     socket.close();
             }
