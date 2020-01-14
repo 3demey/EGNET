@@ -106,7 +106,6 @@ public class Dealer {
         final ServerSocket server = new ServerSocket(2000);
         int players = 0;
         while (true) {
-            final int fplayers = players;
             Socket socket = server.accept();
             players++;
             if (players <= 2) {
@@ -250,6 +249,7 @@ public class Dealer {
                             socket.close();
                     } catch (IOException e) { }
                 }).run();
+                players--; //todo: not good, will change while thread is running
             }//if too many players
             else {
                 String clientAddress = socket.getInetAddress() + ":" + socket.getPort();
