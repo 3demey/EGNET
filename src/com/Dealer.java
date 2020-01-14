@@ -3,20 +3,27 @@ package com;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+//TODO: should change earn accordingly to an array with size 1, thats cause we're changing its value inside the function
+// (because that its int, passed by value)  - DONE!
+//TODO: should check if there is another variable that is being updated inside functions and to the same.
+//TODO: Should check all use-cases for our game.
+//TODO: Should Check if the game works in paralel for 2 users (and what happens in more)
+//TODO: should change the PIPIKAKI messege
+//TODO:should start documenting that damned thing
 
 public class Dealer {
     // Tool functions for later use
-    public static String Winnings(int earn, boolean fin) {
+    public static String Winnings(int[] earn, boolean fin) {
         //General function that returns a message for accumulated winnings.
         // This function can be used in different scenarios. End of a Game (natural or quit), or status check.
         // variable: fin - enables additional messages if we reached the end of the game (endg).
         String msg ="", endg = "";
-        if (earn > 0) { //Total earnings are positive - player won more than he lost.
+        if (earn[0] > 0) { //Total earnings are positive - player won more than he lost.
           msg = "Player won " + earn + "$";
           if (fin) //If we reached the end of a game - additional message to be added.
             endg = "\nPlayer is the winner! :)";}
-        else if (earn < 0) { //Total earnings are negative - player lost more than he won.
-          msg = "Player lost " + (-earn) + "$";
+        else if (earn[0] < 0) { //Total earnings are negative - player lost more than he won.
+          msg = "Player lost " + (-earn[0]) + "$";
           if (fin)
              endg = "\nDealer is the winner! :(";}
         else {
@@ -27,7 +34,7 @@ public class Dealer {
         return msg + endg;
     }
     // Main functions used in game
-    public static String resultMsg(int bet, int round, Card pcard, Card dcard, int earn)  {
+    public static String resultMsg(int bet, int round, Card pcard, Card dcard, int[] earn)  {
         // Returns string with round result data, to be sent to the player.
         // Function also updates sum earnings.
         String header = "The result of round  " + round; // Header - appropriate for every round result.
@@ -35,11 +42,11 @@ public class Dealer {
         String dc = "Dealer's card: " + dcard.get_display() +"\n", pc = "Player's card: " + pcard.get_display() +"\n";
         if (pcard.get_rank() > dcard.get_rank()) {
             result = ":\n Player won " + bet + "$\n"; // Appropriate result message when player wins round.
-            earn += bet; //Total earnings increased by winning bet.
+            earn[0] += bet; //Total earnings increased by winning bet.
              }
         else if (pcard.get_rank() < dcard.get_rank()) {
             result = ":\n Dealer won " + bet + "$\n"; // Appropriate result message when dealer wins round.
-            earn -= bet; //Total winnings decreased by loss of bet.
+            earn[0] -= bet; //Total winnings decreased by loss of bet.
         }
         else { //This means card ranks are level - a tie!
             result = " is a tie!\n"; // Appropriate result message when round ends with a tie.
@@ -47,11 +54,11 @@ public class Dealer {
         }
         return header + result + dc + pc + draw;
     }
-    public static String tieProced(int bet,int round, int earn, int selection, Deck deck)  {
+    public static String tieProced(int bet,int round, int[] earn, int selection, Deck deck)  {
         //Tie procedure, returns message to send to player, when there is a tie.
         String header ="Round " + round + " tie breaker:\n";
         if (selection == 0) {
-            earn-=(bet/2);
+            earn[0]-=(bet/2);
             return header + "Player surrendered!\nThe bet: "+ bet +"$\nDealer won: " + (bet/2) + "\n Player won: " + (bet/2); }
         else {
             header += "Going to war!\n";
@@ -67,29 +74,29 @@ public class Dealer {
             String dc = "Dealer's card: " + dcard.get_display() + "\n", pc = "Player's card: " + pcard.get_display() + "\n";
             if (dcard.get_rank() > pcard.get_rank()) {
                 result = "Dealer won " + (bet * 2) + "$\n"; // Appropriate result message when player wins round.
-                earn -= (bet * 2);
+                earn[0] -= (bet * 2);
             } else if (dcard.get_rank() < pcard.get_rank()) {
                 result = "Player won: " + bet + "$\n"; // Appropriate result message when dealer wins round.
-                earn += bet;
+                earn[0] += bet;
             } else {
                 result = "Player won: " + (bet * 2) + "$\n"; // Appropriate result message when round ends with a draw.
-                earn += (bet * 2);
+                earn[0] += (bet * 2);
             }
             return header + tieMsg + dc + pc + result;
         }
     }
-    public static String finalResultMsg(int earn) {
+    public static String finalResultMsg(int[] earn) {
         // Returns appropriate string for sending player when the game ends.
         String finalmsg = Winnings(earn,true); // A string that represents total winnings - see winnings. Game over - fin == true.
         String append = "\nWould you like to play again?"; // Additional message when game ends.
         return finalmsg + append;
     }
-    public static String currentStatus(int round, int earn) { //Message sent when checking status.
+    public static String currentStatus(int round, int[] earn) { //Message sent when checking status.
         String status = "Current round: " + round +".\n";
         String winnings = Winnings(earn,false); // fin == false, game hasn't ended yet.
         return status + winnings;
     }
-    public static String playerQuit(int round, int earn) {
+    public static String playerQuit(int round, int[] earn) {
         String endGame = "The game has ended on round " + round + "!";
         String quit = "\nThe player quit.\n";
         String win = Winnings(earn,false);
@@ -116,7 +123,9 @@ public class Dealer {
                         PrintStream toPlayerOutputStream = new PrintStream(socket.getOutputStream());
                         String line = "";
                         Deck deck = new Deck(); // A pile for dealer to draw from.
-                        int round = 1, bet, earn = 0, total = 0; // round indicator, acceptor for player's bet, earn - game earnings, total - total earnings from all games.
+                        int round = 1, bet, total = 0; // round indicator, acceptor for player's bet, earn - game earnings, total - total earnings from all games.
+                        int[] earn = new int[1];
+                        earn[0] = 0;
                         int tieSelect; // tieSelect - proceed/surrender.
                         Card pcard = deck.draw(), dcard; // Card for player
                         line = "Welcome to our WAR GAME!!\nYour card: " + pcard.get_display() + "\nPlease enter the amount you are willing to bet on: ";
@@ -190,7 +199,7 @@ public class Dealer {
                             } // switch
                             if (deck.getSize() < 2) {//Deck empty.
                                 line = finalResultMsg(earn);
-                                total += earn;
+                                total += earn[0];
                                 if (total > 0)
                                     line += "\nIn total, player won " + total + "$";
                                 else
@@ -204,7 +213,7 @@ public class Dealer {
                                     deck = new Deck();
                                     pcard = deck.draw();
                                     round = 1; //Restarting round counter.
-                                    earn = 0; //Restarting game earnings.
+                                    earn[0] = 0; //Restarting game earnings.
                                     line = "new WAR GAME starting!!";
                                     line += "\nYour card: " + pcard + "\nPlease enter your bet."; // Sends player first card.
                                     toPlayerOutputStream.println(line.replace('\n','#'));
