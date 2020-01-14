@@ -31,12 +31,4 @@ public class Card {
             this._display = "A" + this._suit;
     }
 
-    public static void main(String[] args) {
-        String ex = "MEsiba\nSabich";
-        System.out.println(ex);
-        String ne = ex.replace('\n', '#');
-        System.out.println(ne);
-        String poop = ne.replace('#','\n');
-        System.out.println(poop);
-    }
 }
