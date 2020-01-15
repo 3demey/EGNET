@@ -5,12 +5,12 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//TODO: Should Check if the game kicks out 3rd player
 //Todo: Edit main menu
 //TODO: remove enter any number to continue (in player)
 //TODO: host & port input
 //todo: ask about accept + send card
 //todo: improve closing
+//todo: msg to player why he left.
 
 public class Dealer {
     // Tool functions for later use
