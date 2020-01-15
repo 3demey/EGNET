@@ -5,7 +5,12 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//TODO: Should Check if the game works in parallel for 2 users (and what happens in more)
+//TODO: Should Check if the game kicks out 3rd player
+//Todo: Edit main menu
+//TODO: remove enter any number to continue (in player)
+//TODO: host & port input
+//todo: ask about accept + send card
+//todo: improve closing
 
 public class Dealer {
     // Tool functions for later use
@@ -105,11 +110,10 @@ public class Dealer {
 
     public static void main(String[] args) throws IOException {
         final ServerSocket server = new ServerSocket(2000);
-        AtomicInteger players = new AtomicInteger();
+        AtomicInteger players = new AtomicInteger(0);
         while (true) {
             Socket socket = server.accept();
             players.getAndIncrement();
-            final int fPlayers = players.get();
             if (players.get() <= 2) {
                 new Thread(() -> {//Lambda function
                     String clientAddress = "";
@@ -251,7 +255,7 @@ public class Dealer {
                             socket.close();
                         players.getAndDecrement();
                     } catch (IOException e) { }
-                }).run();
+                }).start();
             }//if too many players
             else {
                 String clientAddress = socket.getInetAddress() + ":" + socket.getPort();
