@@ -23,7 +23,7 @@ public class Player {
             initLine = fromDealerInputStream.readLine();
             line = initLine.replace('#', '\n');
             System.out.println(line);
-            while(!(line.contains("goodbye"))){
+            while(!(line.contains("Goodbye"))){
                 answer = consoleInput.nextInt();
                 while ((answer < 0) || (answer > 9999999)) { //Bet amount boundaries.
                     System.out.println("Illegible entry, please try again.");
