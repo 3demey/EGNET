@@ -22,8 +22,8 @@ public class Player {
             // Gets the message from server and prints it for him
             initLine = fromDealerInputStream.readLine();
             line = initLine.replace('#', '\n');
+            System.out.println(line);
             while(!(line.equals("Game Over"))){
-                System.out.println(line);
                 answer = consoleInput.nextInt();
                 while ((answer < 0) || (answer > 9999999)) { //Bet amount boundaries.
                     System.out.println("Illegible entry, please try again.");
@@ -32,12 +32,19 @@ public class Player {
                 toDealerOutputStream.writeInt(answer);
                 initLine = fromDealerInputStream.readLine();
                 line = initLine.replace('#','\n');
+                System.out.println(line);
+                if (line.contains("MAIN MENU") || line.contains("Quitting") || line.contains("Deck empty")) //Scenarios where we will receive another input.
+                {
+                    initLine = fromDealerInputStream.readLine();
+                    line = initLine.replace('#','\n');
+                    System.out.println(line);
+                }
             }
         } catch(Exception e) {System.err.println(e);}
         finally {
             try{
                 socket.close();
-                System.out.println("Client disconnected");
+                System.out.println(new Date() + " Disconnected from server");
             } catch(IOException e) {}
         }
     } // main
