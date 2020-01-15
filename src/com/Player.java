@@ -9,12 +9,11 @@ public class Player {
     public static void main(String[] args) {
         Socket socket = null;
         DataInputStream fromDealerInputStream;
-        //DataInputStream consoleInput;
         Scanner consoleInput = new Scanner(System.in);
         DataOutputStream toDealerOutputStream;
         String initLine = "";       //line with # instead of \n
         String line = "";
-        int answer;
+        int answer = 0;
         try{
             socket = new Socket("localhost",2000);
             System.out.println(new Date() + ". Connected to server - " + socket.getLocalAddress() + ":" + socket.getLocalPort());
@@ -26,6 +25,10 @@ public class Player {
             while(!(line.equals("Game Over"))){
                 System.out.println(line);
                 answer = consoleInput.nextInt();
+                while ((answer < 0) || (answer > 9999999)) {
+                    System.out.println("Illegible entry, please try again.");
+                    answer = consoleInput.nextInt();
+                }
                 toDealerOutputStream.writeInt(answer);
                 initLine = fromDealerInputStream.readLine();
                 line = initLine.replace('#','\n');

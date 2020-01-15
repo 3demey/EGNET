@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-//TODO: Should Check if the game works in paralel for 2 users (and what happens in more)
+//TODO: Should Check if the game works in parallel for 2 users (and what happens in more)
 
 public class Dealer {
     // Tool functions for later use
@@ -63,7 +63,7 @@ public class Dealer {
                     deck.draw(); //Discarding & not using cards.
                     cardDiscarded++;
                 }
-            String discard = cardDiscarded + " cards were discarded";
+            String discard = cardDiscarded + " cards were discarded.\n";
             String tieMsg = "Original bet: " + bet + "$\nNew bet: " + (2 * bet) + "$\n", result = "";
             Card pcard = deck.draw(), dcard = deck.draw();
             String dc = "Dealer's card: " + dcard.get_display() + "\n", pc = "Player's card: " + pcard.get_display() + "\n";
@@ -126,7 +126,7 @@ public class Dealer {
 
                         //welcome message and first round, including the case of a tie in the beginning.
                         Card pcard = deck.draw(), dcard; // Card for player
-                        line = "Welcome to our WAR GAME!!\nYour card: " + pcard.get_display() + "\nPlease enter the amount you are willing to bet on: ";
+                        line = "Welcome to our WAR GAME!!\nYour card: " + pcard.get_display() + "\nPlease enter the amount you are willing to bet on (up to 9999999$): ";
                         toPlayerOutputStream.println(line.replace('\n','#'));
                         bet = fromPlayerInputStream.readInt();
                         dcard = deck.draw();
@@ -162,16 +162,16 @@ public class Dealer {
                                     //drawing card, sending a message to client for bet and then drawing for dealer and messaging the client
                                     round++;
                                     pcard = deck.draw();
-                                    line = "Your card:" + pcard.get_display() + "\nPlease enter your bet.";
+                                    line = "Your card:" + pcard.get_display() + "\nPlease enter your bet (up to 9999999$).";
                                     toPlayerOutputStream.println(line.replace('\n','#'));
                                     bet = fromPlayerInputStream.readInt();
                                     dcard = deck.draw();
                                     line = resultMsg(bet, round, pcard, dcard, earn);
-                                    //if there isnt tie
+                                    //if there isn't tie
                                     if (dcard.get_rank() != pcard.get_rank())
                                         line += "\n\nEnter any number to continue.";
                                     toPlayerOutputStream.println(line.replace('\n','#'));
-                                    //if it's tie
+                                    //if it's a tie
                                     if (dcard.get_rank() == pcard.get_rank()) { // TIE - receiving decision from player.
                                         tieSelect = fromPlayerInputStream.readInt(); //Go to war or Surrender
                                         //checking if there are enough cards for tie, if not - client loses as if he would surrender
@@ -225,7 +225,7 @@ public class Dealer {
                                     round = 1; //Restarting round counter.
                                     earn[0] = 0; //Restarting game earnings.
                                     line = "new WAR GAME starting!!";
-                                    line += "\nYour card: " + pcard.get_display() + "\nPlease enter your bet."; // Sends player first card.
+                                    line += "\nYour card: " + pcard.get_display() + "\nPlease enter your bet. (up to 9999999$)"; // Sends player first card.
                                     toPlayerOutputStream.println(line.replace('\n','#'));
                                     bet = fromPlayerInputStream.readInt();
                                     dcard = deck.draw();
