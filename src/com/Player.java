@@ -25,7 +25,7 @@ public class Player {
             while(!(line.equals("Game Over"))){
                 System.out.println(line);
                 answer = consoleInput.nextInt();
-                while ((answer < 0) || (answer > 9999999)) {
+                while ((answer < 0) || (answer > 9999999)) { //Bet amount boundaries.
                     System.out.println("Illegible entry, please try again.");
                     answer = consoleInput.nextInt();
                 }

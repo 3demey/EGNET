@@ -3,6 +3,7 @@ package com;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO: Should Check if the game works in parallel for 2 users (and what happens in more)
 
@@ -104,11 +105,12 @@ public class Dealer {
 
     public static void main(String[] args) throws IOException {
         final ServerSocket server = new ServerSocket(2000);
-        int players = 0;
+        AtomicInteger players = new AtomicInteger();
         while (true) {
             Socket socket = server.accept();
-            players++;
-            if (players <= 2) {
+            players.getAndIncrement();
+            final int fPlayers = players.get();
+            if (players.get() <= 2) {
                 new Thread(() -> {//Lambda function
                     String clientAddress = "";
                     try {
@@ -152,7 +154,7 @@ public class Dealer {
                             // Player picks his next move: 1 - next round, 2 - status check, 3 - quit game.
                             line = "\n\n=================================================\n";
                             line += "Select your next move:\n1) Continue to next round.\n2) Check game status.\n3) Quit game.\n";
-                            line += "=================================================";
+                            line += "=================================================\n";
                             toPlayerOutputStream.println(line.replace('\n','#'));
                             choice = fromPlayerInputStream.readInt();
                             switch (choice) {
@@ -247,9 +249,9 @@ public class Dealer {
                         toPlayerOutputStream.println("Game Over");
                         if(!socket.isClosed())
                             socket.close();
+                        players.getAndDecrement();
                     } catch (IOException e) { }
                 }).run();
-                players--; //todo: not good, will change while thread is running
             }//if too many players
             else {
                 String clientAddress = socket.getInetAddress() + ":" + socket.getPort();
@@ -258,7 +260,7 @@ public class Dealer {
                 toPlayerOutputStream.println("Game Over");
                 if (!socket.isClosed())
                     socket.close();
-                players--;
+                players.getAndDecrement();
             }
             }
         }
