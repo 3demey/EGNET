@@ -7,15 +7,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO: host & port input
 //todo: improve closing
-//todo: msg to player why he left.
 
 public class Dealer {
     // Tool functions for later use
-    public static String Winnings(int[] earn, boolean fin) {
+    private static String Winnings(int[] earn, boolean fin) {
         //General function that returns a message for accumulated winnings.
         // This function can be used in different scenarios. End of a Game (natural or quit), or status check.
         // variable: fin - enables additional messages if we reached the end of the game (endg).
-        String msg ="", endg = "";
+        String msg , endg = "";
         if (earn[0] > 0) { //Total earnings are positive - player won more than he lost.
           msg = "Player won " + earn[0] + "$";
           if (fin) //If we reached the end of a game - additional message to be added.
@@ -32,11 +31,11 @@ public class Dealer {
         return msg + endg;
     }
     // Main functions used in game
-    public static String resultMsg(int bet, int round, Card pcard, Card dcard, int[] earn)  {
+    private static String resultMsg(int bet, int round, Card pcard, Card dcard, int[] earn)  {
         // Returns string with round result data, to be sent to the player.
         // Function also updates sum earnings.
         String header = "The result of round  " + round; // Header - appropriate for every round result.
-        String result = "",  draw =""; //Strings for certain messages - draw only used when round ends with a tie.
+        String result,  draw =""; //Strings for certain messages - draw only used when round ends with a tie.
         String dc = "Dealer's card: " + dcard.get_display() +"\n", pc = "Player's card: " + pcard.get_display() +"\n";
         if (pcard.get_rank() > dcard.get_rank()) {
             result = ":\n Player won " + bet + "$\n"; // Appropriate result message when player wins round.
@@ -52,7 +51,7 @@ public class Dealer {
         }
         return header + result + dc + pc + draw;
     }
-    public static String tieProced(int bet,int round, int[] earn, int selection, Deck deck)  {
+    private static String tieProced(int bet,int round, int[] earn, int selection, Deck deck)  {
         //Tie procedure, returns message to send to player, when there is a tie.
         String header ="Round " + round + " tie breaker:\n";
         if (selection == 0) {
@@ -67,7 +66,7 @@ public class Dealer {
                     cardDiscarded++;
                 }
             String discard = cardDiscarded + " cards were discarded.\n";
-            String tieMsg = "Original bet: " + bet + "$\nNew bet: " + (2 * bet) + "$\n", result = "";
+            String tieMsg = "Original bet: " + bet + "$\nNew bet: " + (2 * bet) + "$\n", result;
             Card pcard = deck.draw(), dcard = deck.draw();
             String dc = "Dealer's card: " + dcard.get_display() + "\n", pc = "Player's card: " + pcard.get_display() + "\n";
             if (dcard.get_rank() > pcard.get_rank()) {
@@ -83,18 +82,18 @@ public class Dealer {
             return header + discard + tieMsg + dc + pc + result;
         }
     }
-    public static String finalResultMsg(int[] earn) {
+    private static String finalResultMsg(int[] earn) {
         // Returns appropriate string for sending player when the game ends.
         String finalmsg = Winnings(earn,true); // A string that represents total winnings - see winnings. Game over - fin == true.
         String append = "\nWould you like to play again?"; // Additional message when game ends.
         return finalmsg + append;
     }
-    public static String currentStatus(int round, int[] earn) { //Message sent when checking status.
+    private static String currentStatus(int round, int[] earn) { //Message sent when checking status.
         String status = "Current round: " + round +".\n";
         String winnings = Winnings(earn,false); // fin == false, game hasn't ended yet.
         return status + winnings;
     }
-    public static String playerQuit(int round, int[] earn) {
+    private static String playerQuit(int round, int[] earn) {
         String endGame = "The game has ended on round " + round + "!";
         String quit = "\nThe player quit.\n";
         String win = Winnings(earn,false);
@@ -120,7 +119,7 @@ public class Dealer {
                         System.out.println(new Date() + ". Connected to client - " + clientAddress + ". Client will start game shortly...");
                         DataInputStream fromPlayerInputStream = new DataInputStream(socket.getInputStream());
                         PrintStream toPlayerOutputStream = new PrintStream(socket.getOutputStream());
-                        String line = "";
+                        String line;
                         Deck deck = new Deck(); // A pile for dealer to draw from.
                         int round = 1, bet, total = 0; // round indicator, acceptor for player's bet, earn - game earnings, total - total earnings from all games.
                         int[] earn = new int[1];
@@ -256,8 +255,8 @@ public class Dealer {
                                 } // else - start new game
                             } //if - empty deck
                         } // while - playing
-                        System.out.println("Disconnecting from client - " + clientAddress);
-                        toPlayerOutputStream.println("Game Over");
+                        System.out.println(new Date()  + " Disconnecting from client - " + clientAddress + ". Client completed game.");
+                        toPlayerOutputStream.println("Game Over. Goodbye");
                         if(!socket.isClosed())
                             socket.close();
                         players.getAndDecrement();
@@ -266,9 +265,9 @@ public class Dealer {
             }//if too many players
             else {
                 String clientAddress = socket.getInetAddress() + ":" + socket.getPort();
-                System.out.println(new Date() + "Connected to client - " + clientAddress + ". Client is kicked out of game.");
+                System.out.println(new Date() + ". Connected to client - " + clientAddress + ". Client is kicked out of game.");
                 PrintStream toPlayerOutputStream = new PrintStream(socket.getOutputStream());
-                toPlayerOutputStream.println("Game Over");
+                toPlayerOutputStream.println("Too many players connected, try again later. Goodbye");
                 if (!socket.isClosed())
                     socket.close();
                 players.getAndDecrement();

@@ -23,7 +23,7 @@ public class Player {
             initLine = fromDealerInputStream.readLine();
             line = initLine.replace('#', '\n');
             System.out.println(line);
-            while(!(line.equals("Game Over"))){
+            while(!(line.contains("goodbye"))){
                 answer = consoleInput.nextInt();
                 while ((answer < 0) || (answer > 9999999)) { //Bet amount boundaries.
                     System.out.println("Illegible entry, please try again.");
@@ -40,11 +40,11 @@ public class Player {
                     System.out.println(line);
                 }
             }
-        } catch(Exception e) {System.err.println(e);}
+        } catch(IOException e) { System.err.println(e); }
         finally {
             try{
                 socket.close();
-                System.out.println(new Date() + " Disconnected from server");
+                System.out.println(new Date() + " Disconnected from server.");
             } catch(IOException e) {}
         }
     } // main
