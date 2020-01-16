@@ -1,3 +1,6 @@
+//Eden Meyer 209720085
+//Guy Menashe 323856419
+
 package com;
 
 import java.io.*;
@@ -5,8 +8,6 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//TODO: host & port input
-//todo: improve closing
 
 public class Dealer {
     // Tool functions for later use
